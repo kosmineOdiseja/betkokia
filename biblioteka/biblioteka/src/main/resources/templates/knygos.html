@@ -1,0 +1,250 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.niekam.nieko">
+<head>
+
+    <title>Autoriai</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/black-tie/jquery-ui.css">
+	
+<style>
+			.anuliuotas, .sanuliuotas {
+				background-color: lightblue;
+			}
+			.redaguoti, .sredaguoti {
+				background-color: lightgreen;
+			}
+			/*
+				jquery ui stiliai
+			*/
+			label, input { display:block; }
+			input.text { margin-bottom:12px; width:95%; padding: .4em; }
+			fieldset { padding:0; border:0; margin-top:25px; }
+			h1 { font-size: 1.2em; margin: .6em 0; }
+			div#users-contain { width: 350px; margin: 20px 0; }
+			div#users-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
+			div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
+			.ui-dialog .ui-state-error { padding: .3em; }
+			.validateTips { border: 1px solid transparent; padding: 0.3em; }	
+			
+	</style>
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" 
+	integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" 
+	crossorigin="anonymous">
+</script>
+
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	
+<script>
+
+	$( document ).ready( function() {
+			 var dialog, form, knygos;
+ 
+			pav = $( "#pav" );
+			knyg_pav = $( "#knyg_pav" );
+			autorius = $( "#autorius" );
+			isleidimo_metai = $( "#isleidimo_metai" );
+			visi_laukai = $( [] ).add( pav ).add( knyg_pav ).add( autorius ).add( isleidimo_metai ).add( kiekis_sand );
+	
+		$.ajax({
+		  url: "validators.js",
+		  dataType: "script",
+		  // success: success
+		});
+		
+			function surastiSarasaPagalId ( id, sarasas ) {
+		
+			found = -1;
+	
+			for ( i = 0; i < sarasas.length; i++) {	
+			
+				if ( id == sarasas [ i ].id ) {
+				
+					found = i;
+				}
+			}
+			return found;
+		}		
+		
+		paimtiAutoriu();
+		
+		function paimtiAutoriu() {
+		
+			$.ajax(
+				{
+					url: "http://localhost:8080/restfull/lst-knygos" 
+													
+				}
+			)
+			.done(
+					function( data ) {
+					
+						knygos = data;
+					
+						res_str = '<table>'
+								+ '<tr>'
+									+ '<th>id</th>'
+									+ '<th>Knygos pavadinimas</th>'
+									+ '<th>Autorius</th>'
+									+ '<th>Isleidimo metai</th>'			
+									+ '<th><input type="button" class="ivesti" value="naujas" id="naujas"></th>'									
+								+ '</tr>'
+						
+						for ( i = 0; i < data.length; i++) {
+						
+							res_str += '<tr class="s' + '" data-id="' + data [ i ].id  +'" >'
+								+ '<td>' + data [ i ].id + '</td>' 
+								+ '<td>' + data [ i ].knygos_pav + '</td>'
+								+ '<td>' + data [ i ].autorius + '</td>'
+								+ '<td>' + data [ i ].isleidimo_metai + '</td>'
+								+ '<td><input type="button" class="anuliuotas" value="alinti"></td>'
+								+ '<td><input type="button" class="redaguoti" value="redaguoti"></td>'
+								;
+								
+							res_str += '</tr>';
+						}
+					}
+					
+						res_str += '</table>'
+						$( '#knygos' ).html ( res_str );
+						
+						$( "#nauja" ).button().on( "click", function() {
+						      $( '#id_knyg' ).val(  '0' );
+						      dialog.dialog( "open" );
+						});						
+						
+						$( '.anuliuotas' ).on ( 'click', function() {
+						
+							$( this ).each ( function() {
+								
+								id_knygos = $( this ).parent( ).parent().data ( 'id' );
+
+								keistiBusena ( id_knygos, 'anuliuotas' );
+							});
+						});
+					
+					$('salinti').on('click', function(){
+						
+								$( "#dialog-confirm" ).dialog({
+									  resizable: false,
+									  height: "auto",
+									  width: 400,
+									  modal: true,
+									  buttons: {
+										"Delete all items": function() {
+										  $( this ).dialog( "close" );
+										},
+										Cancel: function() {
+										  $( this ).dialog( "close" );
+										}
+									}
+							    });
+							   );
+
+						$( '.redaguoti' ).on ( 'click', function() {
+												
+							$( this ).each ( function() {
+								
+								id_knygos = $( this ).parent( ).parent().data ( 'id' );
+								
+								i_knygos = surastiSarasePagalId ( id_knygos, knygos );
+								
+								$( '#pav' ).val ( knygos [ i_knygos ].pav );
+								$( '#knygos_pav' ).val ( knygos [ i_knygos ].knygos_pav );
+								$( '#autorius' ).val ( knygos [ i_knygos ].autorius );
+								$( '#isleidimo_metai' ).val ( knygos [ i_knygos ].isleidimo_metai );
+				//				$( '#id_knygos' ).val ( id_knygos );
+								dialog.dialog( "open" );
+							});
+						});
+						
+						function pridetiKnyga() {
+		
+						
+								var valid = true;
+								allFields.removeClass( "ui-state-error" );
+							 
+								valid = valid && checkLength( pav, "Pavadinimas", 3, 256 );
+									  valid = valid && checkLength( knygos_pav, "Knygos pavadinimas", 1, 32 );
+									  valid = valid && checkNumber( autorius, "Autorius" );
+									  valid = valid && checkNumber( isleidimo_metai, "Isleidimo metai" );
+								id  = $( '#id_knygos' ).val();
+								issaugotiKnyga( id );
+								 
+								return valid;
+								}
+		function issaugotiKnyga( id ) {
+		
+			params_str = 
+				'id=' + id 
+				+ '&knygos_pav=' + knygos_pav.val()				
+				+ '&autorius=' + autorius.val()
+				+ '&isleidimo_metai=' + isleidimo_metai.val();  
+				
+		
+			$.ajax(
+				{
+					url: "http://localhost:8080/restfull/saugoti-produkta?" + params_str
+				}
+			)
+			.done( function( data ) {
+				
+				alert ( data );
+				dialog.dialog ( 'close' );
+				paimtiProduktus();
+			});			
+		
+		}
+		
+		dialog = $( "#dialog-form" ).dialog({
+		      autoOpen: false,
+		      height: 550,
+		      width: 350,
+		      modal: true,
+		      buttons: {
+			"Prideti": pridetiKnyga
+			"Atsaukti": function() {
+			
+				dialog.dialog( "close" );
+			}
+		      },
+		      close: function() {
+			form[ 0 ].reset();
+			allFields.removeClass( "ui-state-error" );
+		      }
+		});
+		 
+		form = dialog.find( 'form' );
+	});									
+								
+</script>
+</head>
+
+<body>
+
+<div id="dialog-form" title="Produktas">
+  <p class="validateTips">Visi laukeliai turi buti u˛pildyti.</p>
+ 
+  <form id="df" action="">
+    <fieldset>
+      <label for="pav">Pavadinimas</label>
+      <input type="text" name="pav" id="pav" value="" class="text ui-widget-content ui-corner-all">
+      <label for="mat_vnt">Mato vnt.</label>
+      <input type="text" name="mat_vnt" id="mat_vnt" value="" class="text ui-widget-content ui-corner-all">
+      <label for="mato_kiekis">Mato kiekis</label>
+      <input type="text" name="mato_kiekis" id="mato_kiekis" value="" class="text ui-widget-content ui-corner-all">
+      <label for="kaina">Kaina</label>
+      <input type="text" name="kaina" id="kaina" value="" class="text ui-widget-content ui-corner-all">
+      <label for="kiekis_sand">Kiekis sandelyje</label>
+      <input type="text" name="kiekis_sand" id="kiekis_sand" value="" class="text ui-widget-content ui-corner-all">      
+ 
+      <!-- Allow form submission with keyboard without duplicating the dialog button -->
+      <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+    </fieldset>
+	<input type="hidden" name="id" id="id_prod" value="0">
+  </form>
+</div>
+	<div id="produktai">
+	</div>
+</body>
+</html>
