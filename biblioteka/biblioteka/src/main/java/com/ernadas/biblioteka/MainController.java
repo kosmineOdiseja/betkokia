@@ -11,27 +11,27 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 @Controller
-@RequestMapping(path="/resfull")
+@RequestMapping(path="/restfull")
 public class MainController {
-	
+
 	@Autowired
 	private KnygosRepository knygosRepository;
 	
 	@Autowired
 	private AutoriusRepository autoriusRepository;
 	
-	@GetMapping(path="visos_knygos")
+	@GetMapping(path="/visos-knygos")
 	public @ResponseBody Iterable<Knygos> getAllKnyga() {
 	return knygosRepository.findAll();
 	}
 	
-	@GetMapping(path="/knyga")
-	public @ResponseBody Optional<Knygos> Knygos(@RequestParam Integer id) {
-		return knygosRepository.findById(id);
-		
+	@GetMapping(path="/autorius")
+	public @ResponseBody Optional<Autorius> Knygos(@RequestParam Integer id) {
+		return autoriusRepository.findById(id);
+				
 		}
 	
-	@GetMapping(path="/Prideti_knyga") 
+	@GetMapping(path="/prideti_knyga?") 
 	public @ResponseBody String naujaKnyga ( 
 			@RequestParam String knygos_pav  
 			, @RequestParam String autorius  
@@ -84,5 +84,3 @@ public class MainController {
  	 	
 	 }
 	
-
-

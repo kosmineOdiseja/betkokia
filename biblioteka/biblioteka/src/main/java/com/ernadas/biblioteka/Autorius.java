@@ -6,7 +6,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-	
 public class Autorius {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -47,7 +46,4 @@ public class Autorius {
 	public void setSalis(String salis) {
 		this.salis = salis;
 	}
-	
-	
-	
 }
