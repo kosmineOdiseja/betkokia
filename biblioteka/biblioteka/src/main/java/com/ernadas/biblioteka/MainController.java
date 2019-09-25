@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import kaviney.Produktai;
+
 
 @Controller
 @RequestMapping(path="/restfull")
@@ -31,9 +33,9 @@ public class MainController {
 				
 		}
 	
-	@GetMapping(path="/prideti_knyga?") 
-	public @ResponseBody String naujaKnyga ( 
-			@RequestParam String knygos_pav  
+	@GetMapping(path="/prideti_knyga") 
+	public @ResponseBody String naujaKnyga (@RequestParam Integer id
+			, @RequestParam String knygos_pav  
 			, @RequestParam String autorius  
 			, @RequestParam String isleidimo_metai 
 			) {
@@ -66,21 +68,28 @@ public class MainController {
 			 , @RequestParam String autorius
 			 , @RequestParam String isleidimo_metai	
 			 ) {
+		 
+			String res = "Not done";
+			Knygos n = new Knygos();
+			
+			if (id > 0) {
+				
 		 Optional<Knygos> rasta = knygosRepository.findById(id);
-		 String rez =" Nebaigta ";
+		 
 		 
 		 if (rasta.isPresent()) {
-			 Knygos n = rasta.get();
-			 n.setId(id);
-			 n.setKnygos_pav(knygos_pav);
-			 n.setAutorius(autorius);
-			 n.setIsleidimo_metai(isleidimo_metai);
-			 
-			 knygosRepository.save(n);
-			 rez = "Issaugota";
+			   n = rasta.get();
+			   n.setId(id);
 		 	}
-		 return rez; 
+		}
+//			 Knygos n = rasta.get();
+		 n.setKnygos_pav(knygos_pav);
+		 n.setAutorius(autorius);
+		 n.setIsleidimo_metai(isleidimo_metai);
+		 
+		 knygosRepository.save(n);
+		 res = "Issaugota";
+	 	return res; 
 		 }
- 	 	
 	 }
 	
