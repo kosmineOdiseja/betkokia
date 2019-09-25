@@ -11,8 +11,8 @@ public class Knygos {
 	
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-
     private Integer id;
+    
     private String knygos_pav;
     private String autorius;
     private String isleidimo_metai;
@@ -41,5 +41,7 @@ public class Knygos {
 	public void setIsleidimo_metai(String isleidimo_metai) {
 		this.isleidimo_metai = isleidimo_metai;
 	}
- 
+	public String toString() {
+		return id + ": " + knygos_pav + " " + autorius + " " + isleidimo_metai;
+	}
 }

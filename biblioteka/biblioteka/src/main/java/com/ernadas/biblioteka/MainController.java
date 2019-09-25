@@ -33,21 +33,7 @@ public class MainController {
 				
 		}
 	
-	@GetMapping(path="/prideti_knyga") 
-	public @ResponseBody String naujaKnyga (@RequestParam Integer id
-			, @RequestParam String knygos_pav  
-			, @RequestParam String autorius  
-			, @RequestParam String isleidimo_metai 
-			) {
-		Knygos k = new Knygos();
-		k.setKnygos_pav(knygos_pav);
-		k.setAutorius(autorius);
-		k.setIsleidimo_metai(isleidimo_metai);
-		System.out.println (k.toString() );
-		knygosRepository.save(k);
-		return "Issaugotas";
-	}
-	
+
 	 @GetMapping (path="pasalinti_knyga")
 	 public @ResponseBody String knygos (@RequestParam Integer id) {
 		 Optional<Knygos> rasta = knygosRepository.findById(id);
@@ -62,7 +48,7 @@ public class MainController {
 		 
 	 }
 	 
-	 @GetMapping(path="redaguoti_knyga")
+	 @GetMapping(path="prideti_knyga")
 	 public @ResponseBody String redaguotiKnyga (@RequestParam Integer id
 			 , @RequestParam String knygos_pav
 			 , @RequestParam String autorius
@@ -71,22 +57,24 @@ public class MainController {
 		 
 			String res = "Not done";
 			Knygos n = new Knygos();
-			
+			 System.out.println ( "id: " + id );
 			if (id > 0) {
 				
-		 Optional<Knygos> rasta = knygosRepository.findById(id);
+				Optional<Knygos> rasta = knygosRepository.findById(id);
 		 
 		 
-		 if (rasta.isPresent()) {
-			   n = rasta.get();
-			   n.setId(id);
-		 	}
-		}
-//			 Knygos n = rasta.get();
+			 if (rasta.isPresent()) {
+				   n = rasta.get();
+
+					 System.out.println (n.toString());				   
+				   // n.setId(id);
+			 	}
+			}
+			
 		 n.setKnygos_pav(knygos_pav);
 		 n.setAutorius(autorius);
 		 n.setIsleidimo_metai(isleidimo_metai);
-		 
+		 System.out.println (n.toString());
 		 knygosRepository.save(n);
 		 res = "Issaugota";
 	 	return res; 
