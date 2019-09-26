@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import kaviney.Produktai;
-
 
 @Controller
 @RequestMapping(path="/restfull")
@@ -34,12 +32,12 @@ public class MainController {
 		}
 	
 
-	 @GetMapping (path="pasalinti_knyga")
+	 @GetMapping (path="pasalinti-knyga")
 	 public @ResponseBody String knygos (@RequestParam Integer id) {
-		 Optional<Knygos> rasta = knygosRepository.findById(id);
+		 Optional<Knygos> found = knygosRepository.findById(id);
 		 
 		 String rez = "Nebaigta";
-		 Knygos n = rasta.get();
+		 Knygos n = found.get();
 		 n.setId(id);
 		 knygosRepository.deleteById(id);
 		 rez = "Istrintas";
@@ -48,7 +46,7 @@ public class MainController {
 		 
 	 }
 	 
-	 @GetMapping(path="prideti_knyga")
+	 @GetMapping(path="prideti-knyga")
 	 public @ResponseBody String redaguotiKnyga (@RequestParam Integer id
 			 , @RequestParam String knygos_pav
 			 , @RequestParam String autorius

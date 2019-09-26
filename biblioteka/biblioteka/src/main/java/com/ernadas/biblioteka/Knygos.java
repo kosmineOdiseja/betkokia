@@ -36,7 +36,7 @@ public class Knygos {
 		this.autorius = autorius;
 	}
 	public String getIsleidimo_metai() {
-		return isleidimo_metai;
+		return isleidimo_metai.substring(0,4);
 	}
 	public void setIsleidimo_metai(String isleidimo_metai) {
 		this.isleidimo_metai = isleidimo_metai;

@@ -91,35 +91,39 @@ $( document ).ready( function() {
 							'<td>' + data [ i ].isleidimo_metai + '</td>';
 					
 					res_str += '<td><input type="button" class="redaguoti" value="Redaguoti"></td>'
-					res_str += '<td><input type="button" class="anuliuotas" value="Naikinti"></td>'
+					res_str += '<td><input type="button" class="salinti" value="Naikinti"></td>'
 					res_str += '<td><input type="button" class="autorius" value="Autorius"></td>'
 					res_str += '</tr>';
 				}
 							
 
-
+					
+					res_str += '</table>'
 						
-						res_str += '</table>'
-						
-						$( '#knygos' ).html ( res_str );
+					$( '#knygos' ).html ( res_str );
 						
 						$( "#naujas" ).button().on( "click", function() {
 						      $( '#id' ).val(  '0' );
 						      dialog.dialog( "open" );
 						});						
-						
+					/*	
 						$( '.anuliuotas' ).on ( 'click', function() {
 						
 							$( this ).each ( function() {
 								
 								id = $( this ).parent( ).parent().data ( 'id' );
 
-								keistiBusena ( id, 'anuliuotas' );
+								//  alert (id);
+							//	keistiBusena ( id, 'anuliuotas' );
 							});
 						});
+						*/
+						alert(id);
 						
+						$('.salinti').on('click', function(){
 						
-						$('salinti').on('click', function(){
+							id = $( this ).parent( ).parent().data ( 'id' );
+
 						
 						    $( "#dialog-confirm" ).dialog({
 							      resizable: false,
@@ -127,7 +131,21 @@ $( document ).ready( function() {
 							      width: 400,
 							      modal: true,
 							      buttons: {
-								"Delete all items": function() {
+								"Šalinti": function() {
+
+								  
+									$.ajax(
+										{
+											url: "http://localhost:8080/restfull/pasalinti-knyga?id=" + id
+																					
+										})
+										
+									.done(	function( data ) {	
+									
+										alert( data );
+										pasiimtiKnygas();
+									});
+	
 								  $( this ).dialog( "close" );
 								},
 								Cancel: function() {
@@ -176,7 +194,7 @@ $( document ).ready( function() {
 		
 			$.ajax(
 				{
-					url: "http://localhost:8080/restfull/prideti_knyga?" + params_str
+					url: "http://localhost:8080/restfull/prideti-knyga?" + params_str
 				}
 			)
 			.done( function( data ) {
@@ -212,38 +230,7 @@ $( document ).ready( function() {
 		
 		pasiimtiKnygas();
 		
-		$( '#naujas' ).click ( function() {
-			dialog.dialog( "open" );
-		});
-	
-			alert ('Vykdomas nauja  knyga');
-	/*		
-sita mano rasyta funkcija yra beverte nes joje nera nieko  ku prasidetu veiksmas ty jokio 
-mygtuko ar kazko pan. 
-	
-			nauja_knyga = {
-				knygos_pav: $('#knygos_pav').val(),
-				autorius : ($ ('#autorius').val() ),
-				isleidimo_metai : ($ ('#isleidimo_metai').val() )
-			}
-			params_str = 
-				'knygos_pav' + knygos.knygos_pav +
-				'autorius' + knygos.autorius + 
-				'isleidimo_metai' + knygos.isleidimo_metai;
-				
-		//		alert ( "http://localhost:8080/restfull/pridetiknyga?" + params_str );
-				
-			$.ajax(
-				{
-				url: "http://localhost:8080.restfull/nauja_knyga" + params_str
-				}
-			)
-			.done( function ( data ){
-				alert( data );
-				pasiimtiKnygas();
-			});
-	*/		
-		form = dialog.find( 'form' );
+	form = dialog.find( 'form' );
 
 	});	
 </script>
@@ -273,5 +260,12 @@ mygtuko ar kazko pan.
 </div>
 	<div id="knygos">
 	</div>
+	<!-- Trynimo patvirtinimo langas -->
+	<div id="dialog-confirm" title="Ar tikrai norite ištrinti?">
+  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Šie įrašai bus ištrinti, be galimybės juos atstatyti. Ar tikrai norite šalinti įrašą?</p>
+</div>
+	
+	
+	
 </body>
 </html>
