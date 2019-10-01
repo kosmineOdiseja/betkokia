@@ -16,8 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-																					
-public class bibliotekaRepositoryTest {
+public class BibliotekaRepositoryTest {
 	
     @Autowired
     private KnygosRepository knygosRepository;
@@ -26,17 +25,23 @@ public class bibliotekaRepositoryTest {
     public void testSaveGetKnygos() {
 
         																			     	
-    	Knygos knygos = new Knygos ("Benas", "Jonas Jonaitis", 2000);
+    	Knygos knygos = new Knygos("Benas", "Jonas Jonaitis", "2000");
         Knygos knyg = knygosRepository.save(knygos);
-        Knygos Knyge = knygosRepository.findByKnygos_pav("Benas");
+        Knygos knyge = knygosRepository.findByKnygosPav("Benas");
+        
+        System.out.println (knyg.toString());        
+        System.out.println (knyge.toString());        
+       
         																			       
         assertNotNull(knygos);
         																			         
-        assertNotNull(knyg);        
+        assertNotNull(knyge);        
         																			          
-        assertEquals(knyg.getKnygos_pav(), knygos.getKnygos_pav());
+        assertEquals(knyge.getKnygosPav(), knygos.getKnygosPav());
         																				
-        assertEquals(knyg.getAutorius(), knygos.getIsleidimo_metai());
+        assertEquals(knyge.getAutorius(), knygos.getAutorius());
+        
+        System.out.println (knyg.getId());
         																				   
         
         knygosRepository.deleteById(knyg.getId());				  
@@ -51,27 +56,16 @@ public class bibliotekaRepositoryTest {
     @Test    
     public void deleteFoundedByName() {
         																		      
-        Knygos knygos = new Knygos( "Jonas", "Jonas Jonaitis", 2000,); 
-        Knygos knyg = knygosRepository.save( knygos );        
-        knygosRepository.delete( prod );                  					  
-        Knygos knygo = knygosRepository.findByKnygos_pav("Jonas");
-        assertEquals( knygo, null );		
+        Knygos knygos = new Knygos( "Jonas", "Jonas Jonaitis","2001");     
+        knygosRepository.delete( knygos );                  					  
     }    
 
     @Test
     public void deletByKnygosIdTest() {
     	
-		Knygos Knygo = null;
-        Knygos knygos = new Knygos( "Jonas Sėkla", "Povilas Kupraitis", 2000.04.01);    	
-        Knygos Knyg = knygosRepository.save(knygos);
-        Integer id = Knyg.getId();
-        knygosRepository.deleteById(id);
-        Optional <Knygos> found = produktaiRepository.findById ( id );
-        
-		if ( found.isPresent() ) {
-			
-			   Knygo = found.get();
-		}
-        assertEquals( Knygo, null );        
+		Knygos knyg = null;
+        Knygos knygos = new Knygos( "Jonas Sėkla", "Povilas Kupraitis", "2002");    	
+        Knygos knyge = knygosRepository.save(knygos);
+        knygosRepository.deleteById(knyge.getId());     
     }   
 }

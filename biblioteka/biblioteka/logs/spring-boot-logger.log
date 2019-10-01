@@ -1,0 +1,26 @@
+2019-09-27 09:52:54,013 INFO org.springframework.boot.StartupInfoLogger [main] Starting BibliotekaApplication on antras-pc with PID 2308 (C:\Users\user\Desktop\sources\biblioteka\biblioteka\target\classes started by user in C:\Users\user\Desktop\sources\biblioteka\biblioteka)
+2019-09-27 09:52:54,017 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to default profiles: default
+2019-09-27 09:52:56,265 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [main] Bootstrapping Spring Data repositories in DEFAULT mode.
+2019-09-27 09:52:56,456 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [main] Finished Spring Data repository scanning in 163ms. Found 2 repository interfaces.
+2019-09-27 09:52:57,557 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [main] Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$893c8a40] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-09-27 09:53:00,134 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [main] Tomcat initialized with port(s): 8080 (http)
+2019-09-27 09:53:00,218 INFO org.apache.juli.logging.DirectJDKLog [main] Initializing ProtocolHandler ["http-nio-8080"]
+2019-09-27 09:53:00,273 INFO org.apache.juli.logging.DirectJDKLog [main] Starting service [Tomcat]
+2019-09-27 09:53:00,286 INFO org.apache.juli.logging.DirectJDKLog [main] Starting Servlet engine: [Apache Tomcat/9.0.21]
+2019-09-27 09:53:00,756 INFO org.apache.juli.logging.DirectJDKLog [main] Initializing Spring embedded WebApplicationContext
+2019-09-27 09:53:00,757 INFO org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext [main] Root WebApplicationContext: initialization completed in 6618 ms
+2019-09-27 09:53:01,293 INFO com.zaxxer.hikari.HikariDataSource [main] HikariPool-1 - Starting...
+2019-09-27 09:53:01,900 INFO com.zaxxer.hikari.HikariDataSource [main] HikariPool-1 - Start completed.
+2019-09-27 09:53:02,161 INFO org.hibernate.jpa.internal.util.LogHelper [main] HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2019-09-27 09:53:02,311 INFO org.hibernate.Version [main] HHH000412: Hibernate Core {5.3.10.Final}
+2019-09-27 09:53:02,314 INFO org.hibernate.cfg.Environment [main] HHH000206: hibernate.properties not found
+2019-09-27 09:53:02,696 INFO org.hibernate.annotations.common.reflection.java.JavaReflectionManager [main] HCANN000001: Hibernate Commons Annotations {5.0.4.Final}
+2019-09-27 09:53:03,048 INFO org.hibernate.dialect.Dialect [main] HHH000400: Using dialect: org.hibernate.dialect.MySQL5Dialect
+2019-09-27 09:53:04,210 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [main] Initialized JPA EntityManagerFactory for persistence unit 'default'
+2019-09-27 09:53:05,237 INFO org.springframework.scheduling.concurrent.ExecutorConfigurationSupport [main] Initializing ExecutorService 'applicationTaskExecutor'
+2019-09-27 09:53:05,319 WARN org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration$JpaWebMvcConfiguration [main] spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2019-09-27 09:53:05,851 INFO org.apache.juli.logging.DirectJDKLog [main] Starting ProtocolHandler ["http-nio-8080"]
+2019-09-27 09:53:06,020 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [main] Tomcat started on port(s): 8080 (http) with context path ''
+2019-09-27 09:53:06,051 INFO org.springframework.boot.StartupInfoLogger [main] Started BibliotekaApplication in 13.033 seconds (JVM running for 14.187)

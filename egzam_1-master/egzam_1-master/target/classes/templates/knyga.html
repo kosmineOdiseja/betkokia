@@ -1,0 +1,302 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.niekam.nieko">
+<head>
+
+    <title>Knygos</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/black-tie/jquery-ui.css">
+	
+<style>
+					
+		/* formos stilius */
+					
+	label, input { display:block; }
+	input.text { margin-bottom:12px; width:95%; padding: .4em; }
+	fieldset { padding:0; border:0; margin-top:25px; }
+	h1 { font-size: 1.2em; margin: .6em 0; }
+	div#users-contain { width: 350px; margin: 20px 0; }
+	div#users-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
+	div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
+	.ui-dialog .ui-state-error { padding: .3em; }
+	.validateTips { border: 1px solid transparent; padding: 0.3em; }
+			
+	.anuliuotas {
+		color: red;
+	}
+	
+	.redaguoti {
+		color: green;
+	}
+	
+</style>
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" 
+	integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" 
+	crossorigin="anonymous">
+</script>
+
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	
+<script>
+
+$(document).ready ( function() {
+
+	var id_knyga;
+	var id_knyga_a;
+	
+	pasiimtiKnygas()
+
+function pasiimtiKnygas() {
+									
+		$.ajax(
+			{
+				url: "http://localhost:8080/restfull/all_knyga" 
+														
+			})
+			
+		.done(	function( data ) {	
+			
+			res_str = '<table align="center">'
+				+ '<tr><th>ID</th><th>Pavadinimas</th><th>Tipas</th></tr>';
+									
+			for ( i = 0; i < data.length; i++) {
+						
+				res_str += '<tr class="s' + data [ i ].pavadinimas  + '"data-pavadinimas="' + data[i].pavadinimas + '"data-tipas="' + data[i].tipas + '" data-id="' + data [ i ].id  +'" >'
+						+ '<td>' + data [ i ].id + '</td>' 
+						+ '<td>' + data [ i ].pavadinimas + '</td>'
+						+ '<td>' + data [ i ].tipas + '</td>';
+				
+				res_str += '<td><input type="button" class="redaguoti" value="Redaguoti"></td>'
+				res_str += '<td><input type="button" class="anuliuotas" value="Naikinti"></td>'
+				res_str += '<td><input type="button" class="autorius" value="Autorius"></td>'
+				res_str += '</tr>';
+			}
+						
+			res_str += '</table>'
+			
+			$( '#knygos' ).html ( res_str );
+			
+			$( '.autorius').on ('click', function() {
+				
+				id_knyga_a = $( this ).parent().parent().data('id');
+				pasiimtiAutoriu();
+				
+			});
+			
+			$( '.anuliuotas' ).on ( 'click', function() {
+						
+				id_knyga = $( this ).parent().parent().data( 'id' );
+				trintiKnyga(id_knyga);							
+			});
+			
+			$('.redaguoti').on ('click', function() {
+				
+				red_knyga.dialog( "open" );
+							
+				id_knyga = $( this ).parent().parent().data( 'id' );
+				$( '#pavadinimas' ).val ( $( this ).parent().parent().data( 'pavadinimas' ) );
+				$( '#tipas' ).val ( $( this ).parent().parent().data( 'tipas' ) );
+				
+			});
+			
+		});
+}
+
+function pasiimtiAutoriuSarasa() {
+	
+	$( 'select#dropdown' ).html('');
+	
+	$.ajax(
+			{
+				url: "http://localhost:8080/restfull/all_autorius"
+														
+			})
+			
+		.done(	function( data ) {	
+		
+			for ( i = 0; i < data.length; i++) {
+	
+				$( 'select#dropdown' ).append(  '<option value="' + data [ i ].id + '">' + data [ i ].pavarde + '</option>');
+			}	
+			
+		});
+	
+	prideti_knyga.dialog( "open" );
+
+}
+
+		
+function pasiimtiAutoriu() {
+									
+		$.ajax(
+			{
+				url: "http://localhost:8080/restfull/knyga?id=" + id_knyga_a 
+														
+			})
+			
+		.done(	function( data ) {	
+		
+			alert("Vardas: " + data.autorius.vardas + "\n" + "Pavarde: " + data.autorius.pavarde);
+								
+		});
+		
+}
+		
+function trintiKnyga (id) {
+	
+	params_str = 'id=' + id;  
+		
+	$.ajax(
+		{
+			url: "http://localhost:8080/restfull/trink_knyga?" + params_str
+		}
+	)
+	.done( function( data ) {
+				
+		pasiimtiKnygas();
+	});
+}	
+
+
+red_knyga = $( "#dialog-form" ).dialog({
+		autoOpen: false,
+		height: 400,
+		width: 400,
+		modal: true,
+		buttons: {
+        "Išsaugoti pakeitimus": edit_knyga,
+        Uždaryti: function() {
+         red_knyga.dialog( "close" );
+        }
+		},
+});
+
+prideti_knyga = $( "#dialog-form1" ).dialog({
+		autoOpen: false,
+		height: 400,
+		width: 380,
+		modal: true,
+		buttons: {
+        "Įtraukti": add_knyga,
+        Uždaryti: function() {
+         prideti_knyga.dialog( "close" );
+        }
+		},
+});	
+
+
+function edit_knyga() {
+		
+	redaguotas = {
+				
+		id: parseInt ( $( '#id' ).val()	)
+		, pav: $( '#pavadinimas' ).val()
+		, tipas: $( '#tipas' ).val() 
+				
+	}
+			
+	params_str = 
+	
+		"id=" + id_knyga
+		+ "&pavadinimas="  + redaguotas.pav 
+		+ '&tipas=' + redaguotas.tipas 
+								
+	$.ajax(
+		{
+			url: "http://localhost:8080/restfull/edit_knyga?" + params_str
+		}
+	)
+	.done( function( data ) {
+				
+		pasiimtiKnygas();
+			
+	});
+		
+	red_knyga.dialog( "close" );
+	
+}		
+		
+function add_knyga() {
+
+	redaguotas = {
+				
+		pava: $( '#pavadinima' ).val()
+		, tipa: $( '#tipa' ).val() 
+		, idp: parseInt ( $( '#dropdown' ).val() ) 
+				
+	}
+			
+	params_str = 
+	
+		"pavadinimas="  + redaguotas.pava 
+		+ '&tipas=' + redaguotas.tipa 
+		+ '&autorius_id=' + redaguotas.idp
+								
+	$.ajax(
+		{
+			url: "http://localhost:8080/restfull/add_knyga?" + params_str
+		}
+	)
+	.done( function( data ) {
+				
+		pasiimtiKnygas();
+			
+	});
+		
+	prideti_knyga.dialog( "close" );
+
+}
+
+$( "#itraukti" ).on( "click", function() { pasiimtiAutoriuSarasa() });
+
+});
+</script>
+</head>
+
+<body>
+
+<div id="dialog-form" title="Redaguoti knyga">
+	<form>
+    <fieldset>
+	
+	  <label for="pav">Pavadinimas</label>
+      <input type="text" name="pav" id="pavadinimas" value="pavadinimas" class="text">
+	  
+      <label for="tip">Tipas</label>
+      <input type="text" name="tip" id="tipas" value="tipas" class="text">
+	               
+      <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+    </fieldset>
+	</form>
+	</div>
+	
+	<div id="dialog-form1" title="Itraukti knyga">
+	<form>
+    <fieldset>
+	
+	  <label for="pav">Pavadinimas</label>
+      <input type="text" name="pava" id="pavadinima" value="pavadinima" class="text">
+	  
+      <label for="tip">Tipas</label>
+      <input type="text" name="tipa" id="tipa" value="tipa" class="text">
+	   
+	  <label for="dropdown">Pasirink autoriu</label>
+		<select name="pavp" id="dropdown">
+			<option value=""></option>
+		</select> 
+
+			
+      <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+    </fieldset>
+	</form>
+	</div>
+
+<div id="knygos"></div>
+
+
+
+<p><label for="itraukti"></label><input class="itraukti" type="button" value="Įtraukti naują" id="itraukti" title="Įtraukti naują"></p>
+
+
+</body>
+</html>

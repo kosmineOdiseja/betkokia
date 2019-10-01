@@ -1,0 +1,213 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Nuorodos</title>
+    <meta charset="utf-8">
+    		<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    		<link rel="stylesheet" href="jqueryui.css">		
+		<style>
+			.anuliuotas, .sanuliuotas {
+				background-color: lightblue;
+			}
+			.ivykdytas, .sivykdytas {
+				background-color: lightgreen;
+			}
+			table {
+				border-collapse: colapse;
+			}
+			th {
+				background-color: lightgreen;			
+			}
+			th, td {
+				padding: 6px;
+				border: 1px solid grey;
+			}
+		</style>
+	    <script
+		src="https://code.jquery.com/jquery-3.4.1.min.js"
+		integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+		crossorigin="anonymous">
+	    </script>
+	    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>	    
+	    <script src="crud.js"></script>
+	    <script>
+		$( document ).ready ( function() {
+																										// alert ( 'ok, '  + id  );
+			crudNuorodos = function(
+			
+				fields
+				, fields_names
+				, url
+				, field_data
+				, id_html_saraso
+				, id_html_dialog_formos
+				, dialog_size_x
+				, dialog_size_y
+				, title_dialog_form
+				, url_save_rec  
+				, url_delete_rec
+				, fields_edit
+				, field_name
+				, fields_ed_types
+			
+			) {
+				params = {
+				
+					fields: fields
+					, fields_names: fields_names
+					, url : url
+					, field_data: field_data
+					, id_html_saraso: id_html_saraso
+					, id_html_dialog_formos: id_html_dialog_formos
+					, dialog_size_x: dialog_size_x
+					, dialog_size_y: dialog_size_y
+					, title_dialog_form: title_dialog_form
+					, url_save_rec: url_save_rec  
+					, url_delete_rec: url_delete_rec
+					, fields_edit: fields_edit
+					, field_name: field_name
+					, fields_ed_types: fields_ed_types
+				}
+				crud.call ( this, params );	// objektu surišimas pagal https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/prototype                (OS/eilute 1)  ..
+				
+				this.kategorijos = [];
+				this.zymos = [];
+				
+				this.getKategorijos = function() {
+																			// alert( 'run getProduktai' );
+					var i_am = this;
+					
+					$.ajax({
+							url: "http://localhost:8080/ajax/lst-kategorijos" 
+					}).done(
+					
+						function( data_kategorijos ) {
+						
+							i_am.kategorijos = data_kategorijos;
+							
+							$.ajax({
+							
+								url: "http://localhost:8080/ajax/lst-zymos"
+												
+							}).done( 
+							
+								function ( data_zymos ) {
+								
+									i_am.zymos = data_zymos;
+							
+									i_am.initEmpty();
+									i_am.refreshData();
+								}
+							);
+						}
+					);
+				}
+			}
+				
+			crudNuorodos.prototype = Object.create( crud.prototype ); // new crud;			// (OS/eilute 2)
+				
+			crudNuorodos.prototype.constructor = crudNuorodos;						// (OS/eilute 3)
+																				
+			crudNuorodos.prototype.htmDialogoEditFields = function ( i_am  ) {			//  .. ir paveldejimas ir polimorfizmas pagal https://toranbillups.com/blog/archive/2013/05/15/Basic-javascript-inheritance-and-polymorphism/
+				
+																			// this.getProduktai();
+				options_kategorijos = '';
+																			// alert ( 'kiek produktu: ' + this.produktai.length );
+				for ( i= 0; i < this.kategorijos.length; i++ ) {
+																			//alert ( 'i, id, pav:' + i + ',' + this.produktai [ i ].id + ', ' + this.produktai [ i ].pav )
+
+					options_kategorijos += '<option value="' + this.kategorijos [ i ].id + '">' + this.kategorijos [ i ].pav + '</option>';
+
+				}
+																			// alert( options );
+																			
+				crud.prototype.htmDialogoEditFields ( i_am, [ 'pav', 'link' ] );																			
+			
+				i_am.params.res_str += 	'<label for="id_prod">Kategorija</label>' +
+						'<select type="text" name="kategorijos_id" id="kategorijos_id" class="text ui-widget-content ui-corner-all">' +
+							options_kategorijos +
+						'</select>';
+
+				i_am.params.res_str += 	'<label for="tipas">Tipas</label>' +
+							'<input type="radio" name="tipas" value="html" style="display: inline-block"> - html' +
+							'<input type="radio" name="tipas" value="audio" style="display: inline-block"> - audio' +
+							'<input type="radio" name="tipas" value="video" style="display: inline-block"> - video' +
+							'<input type="radio" name="tipas" value="file" style="display: inline-block"> - file';
+
+				i_am.params.res_str += 	'<label for="flags">Būsena</label>' +
+						'<select type="text" name="flags" id="flags" class="text ui-widget-content ui-corner-all">' +
+							'<option value="super">super</option>' +
+							'<option value="reikia_analizuoti">reikia_analizuoti</option>' +
+							'<option value="fragmentai">fragmentai</option>' +
+							'<option value="kita">kita</option>' +
+						'</select>';
+						
+				crud.prototype.htmDialogoEditFields ( i_am, [ 'rating' ] );	
+
+				i_am.params.res_str += '<label for="zymos">Žymos</label>';
+				
+				for ( i=0; i< i_am.zymos.length; i++) {
+				
+					i_am.params.res_str += '<input type="checkbox" name="zymos" value="' +  i_am.zymos[ i ].id + '" style="display: inline-block"> - ' +  i_am.zymos[ i ].pav;
+				}
+				 '<label for="zymosadd">Naujos žymos</label>';
+				i_am.params.res_str += '<input type="text" name="zymosadd" value="">';
+
+				i_am.params.res_str += '<label for="flags">Aprašymas</label>' +
+						'<textarea type="text" name="aprasymas" id="aprasymas" class="text ui-widget-content ui-corner-all">' +
+						'</textarea>';	
+			}
+/*				
+			crudPatiekaloProduktu.prototype.addColumns = function () {
+			
+				return '<td>bla bla</td>';
+			}
+			
+			crudPatiekaloProduktu.prototype.addHeadColumns = function () {
+			
+				return '<th>Bla</th>';
+			}				
+*/																				
+			crud_nuorodos = new crudNuorodos ( 
+
+				[
+					'pav' 
+					, 'link'	
+					, 'kategorijos_id'	
+					, 'tipas'	
+					, 'rating'	
+					, 'flags'	
+					, 'aprasymas'
+				]
+				, [  'pavadinimas', 'link', 'kate-<br>gorijos<br>id', 'tipas', 'vertinimas', 'požymiai', 'aprašymas' ]
+				, 'http://localhost:8080/ajax/lst-nuorodos'
+				, ''				
+				, 'nuorodos'
+				, ''
+				, 400
+				, 640
+				, 'Nuoroda'
+				,  'http://localhost:8080/ajax/saugoti-nuoroda'
+				,  'http://localhost:8080/ajax/salinti-nuoroda'
+				, [ 
+					'pav' 
+					, 'link'	
+					, 'kategorijos_id'	
+					, 'tipas'	
+					, 'rating'	
+					, 'flags'	
+					, 'aprasymas'
+				]
+				, 'pav'
+				,  [ 'text', 'text', 'select', 'radio', 'text', 'select', 'textarea' ]
+			);
+
+			crud_nuorodos.getKategorijos();
+		});	
+	</script>
+</head>
+<body>
+	<div id="nuorodos">
+	</div>
+</body>
+</html>

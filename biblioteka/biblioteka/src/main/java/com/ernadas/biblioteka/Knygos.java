@@ -6,16 +6,25 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-
 public class Knygos {
 	
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer id;
-    
-    private String knygos_pav;
+    private String knygosPav;
     private String autorius;
     private String isleidimo_metai;
+    
+    public Knygos() {}
+    
+    public Knygos(String knygos_pav, String autorius, String isleidimo_metai) {
+    	
+    	 this.knygosPav = knygos_pav;
+    	 this.autorius = autorius;
+    	 this.isleidimo_metai = isleidimo_metai;
+    	    	
+    	
+    }
     
 	public Integer getId() {
 		return id;
@@ -23,11 +32,11 @@ public class Knygos {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	public String getKnygos_pav() {
-		return knygos_pav;
+	public String getKnygosPav() {
+		return knygosPav;
 	}
-	public void setKnygos_pav(String knygos_pav) {
-		this.knygos_pav = knygos_pav;
+	public void setKnygosPav(String knygos_pav) {
+		this.knygosPav = knygos_pav;
 	}
 	public String getAutorius() {
 		return autorius;
@@ -42,6 +51,6 @@ public class Knygos {
 		this.isleidimo_metai = isleidimo_metai;
 	}
 	public String toString() {
-		return id + ": " + knygos_pav + " " + autorius + " " + isleidimo_metai;
+		return id + ": " + knygosPav + " " + autorius + " " + isleidimo_metai;
 	}
 }

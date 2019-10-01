@@ -1,0 +1,299 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.niekam.nieko">
+<head>
+
+    <title>Autoriai</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/black-tie/jquery-ui.css">
+	
+<style>
+					
+		/* formos stilius */
+					
+	label, input { display:block; }
+	input.text { margin-bottom:12px; width:95%; padding: .4em; }
+	fieldset { padding:0; border:0; margin-top:25px; }
+	h1 { font-size: 1.2em; margin: .6em 0; }
+	div#users-contain { width: 350px; margin: 20px 0; }
+	div#users-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
+	div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
+	.ui-dialog .ui-state-error { padding: .3em; }
+	.validateTips { border: 1px solid transparent; padding: 0.3em; }
+			
+	.anuliuotas {
+		color: red;
+	}
+	
+	.redaguoti {
+		color: green;
+	}
+	
+</style>
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" 
+	integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" 
+	crossorigin="anonymous">
+</script>
+
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	
+<script>
+
+$(document).ready ( function() {
+
+	var id_autorius;
+	var id_autorius_k;
+	
+	pasiimtiAutorius();
+
+function pasiimtiAutorius() {
+									
+		$.ajax(
+			{
+				url: "http://localhost:8080/restfull/all_autorius" 
+														
+			})
+			
+		.done(	function( data ) {	
+			
+			res_str = '<table align="center">'
+				+ '<tr><th>ID</th><th>Vardas</th><th>Pavarde</th></tr>';
+									
+			for ( i = 0; i < data.length; i++) {
+						
+				res_str += '<tr class="s' + data [ i ].pavadinimas  + '"data-vardas="' + data[i].vardas + '"data-pavarde="' + data[i].pavarde + '" data-id="' + data [ i ].id  +'" >'
+						+ '<td>' + data [ i ].id + '</td>' 
+						+ '<td>' + data [ i ].vardas + '</td>'
+						+ '<td>' + data [ i ].pavarde + '</td>';
+				
+				res_str += '<td><input type="button" class="redaguoti" value="Redaguoti"></td>'
+				res_str += '<td><input type="button" class="anuliuotas" value="Naikinti"></td>'
+				res_str += '<td><input type="button" class="knyga" value="Knygos"></td>'
+				res_str += '</tr>';
+			}
+						
+			res_str += '</table>'
+			
+			$( '#autoriai' ).html ( res_str );
+			
+			$( '.knyga').on ('click', function() {
+				
+				id_autorius_k = $( this ).parent().parent().data('id');
+				pasiimtiKnygas();
+				
+			});	
+			
+			$( '.anuliuotas' ).on ( 'click', function() {
+						
+				id_autorius = $( this ).parent().parent().data( 'id' );
+				trintiAutoriu(id_autorius);							
+			});
+			
+			$('.redaguoti').on ('click', function() {
+				
+				red_autorius.dialog( "open" );
+							
+				id_autorius = $( this ).parent().parent().data( 'id' );
+				$( '#vardas' ).val ( $( this ).parent().parent().data( 'vardas' ) );
+				$( '#pavarde' ).val ( $( this ).parent().parent().data( 'pavarde' ) );
+				
+			});
+			
+		});
+}
+
+		
+function pasiimtiKnygas() {
+									
+		$.ajax(
+			{
+				url: "http://localhost:8080/restfull/autorius?id=" + id_autorius_k
+														
+			})
+			
+		.done(	function( data ) {	
+		
+			if ( data.knyga.length > 0 )	{
+			
+			alert(data.knyga[0].pavadinimas);
+			
+				$("#knygu_sarasas").dialog("open");
+				
+				i=0;
+				knygos = " ";
+				
+				while (i < data.knyga.length) {
+			
+					knygos = knygos + " " + data.knyga[i].pavadinimas;
+					i++;
+					
+				}
+				
+				$( '#knygu' ).html ( knygos );
+			}
+			
+		});
+		
+}	
+		
+function trintiAutoriu (id) {
+	
+	params_str = 'id=' + id;  
+		
+	$.ajax(
+		{
+			url: "http://localhost:8080/restfull/trink_autorius?" + params_str
+		}
+	)
+	.done( function( data ) {
+				
+		pasiimtiAutorius();
+	});
+}	
+
+
+red_autorius = $( "#dialog-form" ).dialog({
+		autoOpen: false,
+		height: 400,
+		width: 400,
+		modal: true,
+		buttons: {
+        "Išsaugoti pakeitimus": edit_autorius,
+        Uždaryti: function() {
+         red_autorius.dialog( "close" );
+        }
+		},
+});
+
+prideti_autoriu = $( "#dialog-form1" ).dialog({
+		autoOpen: false,
+		height: 400,
+		width: 380,
+		modal: true,
+		buttons: {
+        "Įtraukti": add_autorius,
+        Uždaryti: function() {
+         prideti_autoriu.dialog( "close" );
+        }
+		},
+});	
+
+$( "#knygu_sarasas").dialog({
+
+	autoOpen: false,
+	
+});
+
+function edit_autorius() {
+		
+	redaguotas = {
+				
+		id: parseInt ( $( '#id' ).val()	)
+		, pav: $( '#vardas' ).val()
+		, tipas: $( '#pavarde' ).val() 
+				
+	}
+			
+	params_str = 
+	
+		"id=" + id_autorius
+		+ "&vardas="  + redaguotas.pav 
+		+ '&pavarde=' + redaguotas.tipas 
+								
+	$.ajax(
+		{
+			url: "http://localhost:8080/restfull/edit_autorius?" + params_str
+		}
+	)
+	.done( function( data ) {
+				
+		pasiimtiAutorius();
+			
+	});
+		
+	red_autorius.dialog( "close" );
+	
+}		
+		
+function add_autorius() {
+
+	redaguotas = {
+				
+		vard: $( '#varda' ).val()
+		, pavar: $( '#pavard' ).val() 
+						
+	}
+			
+	params_str = 
+	
+		"vardas="  + redaguotas.vard 
+		+ '&pavarde=' + redaguotas.pavar 
+										
+	$.ajax(
+		{
+			url: "http://localhost:8080/restfull/add_autorius?" + params_str
+		}
+	)
+	.done( function( data ) {
+				
+		pasiimtiAutorius();
+			
+	});
+		
+	prideti_autoriu.dialog( "close" );
+
+}
+
+$( "#itraukti" ).on( "click", function() { 
+	
+	prideti_autoriu.dialog("open") 
+});
+
+});
+</script>
+</head>
+
+<body>
+
+<div id="dialog-form" title="Redaguoti autoriu">
+	<form>
+    <fieldset>
+	
+	  <label for="pav">Vardas</label>
+      <input type="text" name="vardas" id="vardas" value="vardas" class="text">
+	  
+      <label for="tip">Pavarde</label>
+      <input type="text" name="pavarde" id="pavarde" value="pavarde" class="text">
+	               
+      <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+    </fieldset>
+	</form>
+	</div>
+	
+	<div id="dialog-form1" title="Itraukti autoriu">
+	<form>
+    <fieldset>
+	
+	  <label for="pav">Vardas</label>
+      <input type="text" name="vard" id="varda" value="varda" class="text">
+	  
+      <label for="tip">Pavarde</label>
+      <input type="text" name="pavar" id="pavard" value="pavard" class="text">
+	  	  		
+      <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+    </fieldset>
+	</form>
+	</div>
+
+<div id="autoriai"></div>
+
+<div id="knygu_sarasas" >
+		<p><div id="knygu" ></div></p>
+	</div>
+
+
+<p><label for="itraukti"></label><input class="itraukti" type="button" value="Įtraukti naują" id="itraukti" title="Įtraukti naują"></p>
+
+
+</body>
+</html>

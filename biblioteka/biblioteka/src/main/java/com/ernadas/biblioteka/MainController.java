@@ -69,7 +69,7 @@ public class MainController {
 			 	}
 			}
 			
-		 n.setKnygos_pav(knygos_pav);
+		 n.setKnygosPav(knygos_pav);
 		 n.setAutorius(autorius);
 		 n.setIsleidimo_metai(isleidimo_metai);
 		 System.out.println (n.toString());

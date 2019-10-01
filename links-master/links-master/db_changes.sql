@@ -1,0 +1,1 @@
+ALTER TABLE `kategorijos` CHANGE `id_parent` `id_parent` INT(11) NULL;
